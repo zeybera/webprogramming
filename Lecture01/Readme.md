@@ -10,9 +10,9 @@ _footer: ''
 _class : lead
 -->
 
-# Introduction to JavaScript & Developer Tools
+# Introduction to JavaScript, Developer Tools & DOM
 
-JavaScript basics, introduction to Developer Tools, and creating an interactive Memory Game.
+JavaScript basics, introduction to Developer Tools, using the Document Object Model (DOM) and creating an interactive Memory Game.
 
 ---
 
@@ -191,6 +191,96 @@ Operators are essential for setting conditions and calculations within your code
 
 ---
 
+# 🏗 Introduction to the DOM (Document Object Model)
+
+The **Document Object Model (DOM)** represents the structure of a webpage as an **interactive tree**.
+
+- **Each HTML element is a node** in the tree.
+- JavaScript can **access, modify, and manipulate** these elements dynamically.
+- Changes in the DOM instantly update the webpage.
+
+### Example: HTML Document Structure
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM Example</title>
+</head>
+<body>
+    <h1 id="title">Welcome to the DOM</h1>
+    <button id="changeText">Click Me</button>
+</body>
+</html>
+```
+
+---
+
+# 🌳 Understanding the DOM Tree
+
+Every webpage is structured as a **DOM Tree**:
+
+```
+Document
+ ├── <html>
+ │    ├── <head>
+ │    │    ├── <title>
+ │    ├── <body>
+ │         ├── <h1 id="title">
+ │         ├── <button id="changeText">
+```
+
+JavaScript allows **selecting, modifying, and handling events** on these elements.
+
+---
+
+# 🎯 Selecting DOM Elements
+
+To interact with elements, JavaScript provides various selection methods:
+
+### **1. Selecting Elements by ID**
+```javascript
+let heading = document.getElementById("title");
+console.log(heading.textContent); // Output: Welcome to the DOM
+```
+
+### **2. Selecting Elements by Class**
+```javascript
+let buttons = document.getElementsByClassName("btn");
+```
+
+### **3. Selecting Elements with Query Selectors**
+```javascript
+let heading = document.querySelector("#title");
+let allButtons = document.querySelectorAll("button");
+```
+
+---
+
+# ✏️ Modifying the DOM
+
+Once selected, elements can be changed dynamically.
+
+### **Changing Text Content**
+```javascript
+let title = document.getElementById("title");
+title.textContent = "Hello, DOM!";
+```
+
+### **Changing Styles**
+```javascript
+title.style.color = "blue";
+title.style.fontSize = "24px";
+```
+
+### **Adding and Removing Elements**
+```javascript
+let newParagraph = document.createElement("p");
+newParagraph.textContent = "This is a new paragraph!";
+document.body.appendChild(newParagraph);
+```
+
+---
+
 # Functions in JavaScript
 
 **Functions** are reusable blocks of code that perform a specific task.
@@ -272,6 +362,24 @@ Build a Memory Game using JavaScript, HTML, and CSS.
 
 ---
 
+# 🛠 Hands-on: Memory Game & the DOM
+
+To build a **Memory Game**, we need to:
+
+1. **Dynamically generate cards** in the DOM.
+2. **Listen for click events** to flip cards.
+3. **Check for matches** and track score.
+
+### Example: Creating Card Elements in JavaScript
+```javascript
+let card = document.createElement("div");
+card.classList.add("card");
+card.textContent = "🍎";
+document.body.appendChild(card);
+```
+
+---
+
 # Memory Game Logic: Flipping and Matching Cards
 
 1. **Initialize the Card Array**:
@@ -320,6 +428,7 @@ Each function improves game interactivity by providing actions for the player.
 # Next Steps & Weekly Exercise
 
 - **Explore Developer Tools further**: Practice using Console, breakpoints, and Network tabs.
+- **Practice with the DOM**: Try selecting and modifying elements on a webpage.
 - **Weekly Exercise**: Build the basic structure of a Memory Game, integrating debugging tools.
 - **Goal**: A functional game with Console-based debugging support.
 
@@ -329,5 +438,6 @@ Each function improves game interactivity by providing actions for the player.
 
 - **JavaScript Basics Recap**: Variables, operators, functions, debugging tools.
 - **Developer Tools**: Key elements in the Console and Sources tabs.
+- **DOM = structured representation of a webpage**
 - **Q&A**: Open session to address questions.
 - **Exercise Preparation**: Set up and start implementing the Memory Game project for next week.
