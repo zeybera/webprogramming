@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +8,93 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <h1 class="text-center my-4">Memory Game</h1>
         <div id="game-board" class="row justify-content-center">
+
             <!-- Card elements will go here -->
+            <!-- Task 1: set of cards in html & card: marching pair + placeholder ?-->
+            <!-- Task 2: onclick in html ?-->
+
+            <div class="card" onclick="flipCard(this, 'A')">?</div>
+            <div class="card" onclick="flipCard(this, 'B')">?</div>
+            <div class="card" onclick="flipCard(this, 'C')">?</div>
+            <div class="card" onclick="flipCard(this, 'D')">?</div>
+            <div class="card" onclick="flipCard(this, 'D')">?</div>
+            <div class="card" onclick="flipCard(this, 'A')">?</div>
+            <div class="card" onclick="flipCard(this, 'C')">?</div>
+            <div class="card" onclick="flipCard(this, 'B')">?</div>
+        </div>
+
+        <div id="message" class="text-center my-4 d-none">
+            <p id="message-text">Congratulations! All pairs are matched! </p>
+            <button onclick="location.reload()" class="btn btn-primary">Start Again</button>
         </div>
     </div>
     <script>
         // Place script code here
+        /*Task 3: Card Flip Logic (1 Point)
+        a- cards can only be clicked once per round.
+        b- Add a basic visual indicator when a card is flipped.
+        c- When a card is clicked, its symbol should be revealed by updating its textContent.
+        d- Only two cards can be flipped at a time.*/
+
+        // Zwei globale Variablen für die aktuell umgedrehten Karten
+        var firstCard = null;
+        var secondCard = null;
+        var matchedPairs = 0;
+
+        function flipCard(card, symbol) {
+
+            if (card.classList.contains("flipped")) return;   //wenn Karte schon umgedreht ist, dann passiert nichts
+
+            // Karte umdrehen: Symbol anzeigen und visuell markieren
+            card.textContent = symbol;
+            card.classList.add("flipped");
+
+            if (firstCard === null) {         // Speichere die Karte in firstCard oder secondCard
+                firstCard = card;
+            } else {
+                secondCard = card;
+                checkMatch();            // Sobald zwei Karten offen sind, prüfe auf Match
+            }
+        }
+
+        /*  Task 4: Match Cehcking
+        if two flipped cards have the same symbol => stay visible
+        if dont match => hidden after delay (setTimeout)*/
+
+        function checkMatch() {
+            if (firstCard.textContent === secondCard.textContent) {
+
+                matchedPairs++;
+                // Bei einem Match bleiben die Karten offen.
+                // Variablen zurücksetzen, sodass weitere Karten angeklickt werden können.
+
+                firstCard = null;
+                secondCard = null; //reset
+
+                if (matchedPairs === 4) {
+                    document.getElementById("message").classList.remove("d-none");
+                }
+
+            } else {
+                // Kein Match: Karten nach 1 Sekunde wieder umdrehen
+                setTimeout(function () {
+                    firstCard.textContent = "?";
+                    firstCard.classList.remove("flipped");
+                    secondCard.textContent = "?";
+                    secondCard.classList.remove("flipped");
+                    // Variablen zurücksetzen
+                    firstCard = null;
+                    secondCard = null;
+                }, 1000);
+            }
+        }
+
     </script>
 </body>
+
 </html>
