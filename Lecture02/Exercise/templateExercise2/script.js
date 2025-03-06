@@ -33,7 +33,7 @@ const keyMap = {
 };
 
 
-// Funktion zum Abspielen des Sounds aus dem Ordner
+// Funktion zum Abspielen des Sounds / sounds
 function playSound(note) {
     new Audio(`sounds/${note}.mp3`).play();
     
@@ -48,7 +48,7 @@ function activateKey(note) {
     }
 }
 
-// Klick-Ereignisse für die Tasten; ruft playSound auf
+// Klickereignis > Tasten; ruft playSound auf
 document.querySelectorAll(".key, .black-key").forEach(key => {
     key.addEventListener("click", () => {           //statt click auch mousedown möglich
         let note = key.id.replace("key", "");       // Entfernt "key" aus der ID

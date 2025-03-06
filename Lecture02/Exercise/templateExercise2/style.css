@@ -68,16 +68,3 @@ body {
 #keyF4 { left: 224px; }
 #keyG4 { left: 284px; }
 #keyA4 { left: 354px; }
-
-
-
-/* Blaue Umrandung beim Klicken verhindern */
-.key, .black-key {
-    outline: none !important; /* Entfernt Standard-Fokus */
-    box-shadow: none !important; /* Entfernt mögliche Schatten in Chrome/Edge */
-    border: 1px solid black; /* Behält normalen Rand */
-}
-
-
-
-
