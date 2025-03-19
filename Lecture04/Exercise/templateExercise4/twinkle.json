@@ -1,0 +1,18 @@
+{
+    "keys": [
+        { "key": "C", "note": "C", "sound": "sounds/C.mp3" },
+        { "key": "C", "note": "C", "sound": "sounds/C.mp3" },
+        { "key": "G", "note": "G", "sound": "sounds/G.mp3" },
+        { "key": "G", "note": "G", "sound": "sounds/G.mp3" },
+        { "key": "A", "note": "A", "sound": "sounds/A.mp3" },
+        { "key": "A", "note": "A", "sound": "sounds/A.mp3" },
+        { "key": "G", "note": "G", "sound": "sounds/G.mp3" },
+        { "key": "F", "note": "F", "sound": "sounds/F.mp3" },
+        { "key": "F", "note": "F", "sound": "sounds/F.mp3" },
+        { "key": "E", "note": "E", "sound": "sounds/E.mp3" },
+        { "key": "E", "note": "E", "sound": "sounds/E.mp3" },
+        { "key": "D", "note": "D", "sound": "sounds/D.mp3" },
+        { "key": "D", "note": "D", "sound": "sounds/D.mp3" },
+        { "key": "C", "note": "C", "sound": "sounds/C.mp3" }
+    ]
+}
