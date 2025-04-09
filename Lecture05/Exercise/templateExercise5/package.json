@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  },
+  "name": "webprogramming",
+  "version": "1.0.0",
+  "description": "Welcome to the repo for the lecture Web Programming",
+  "main": "piano.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeybera/webprogramming.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zeybera/webprogramming/issues"
+  },
+  "homepage": "https://github.com/zeybera/webprogramming#readme"
+}
