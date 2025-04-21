@@ -10,16 +10,449 @@
 <body>
     <div class="container">
         <h1 class="text-center my-4">Memory Game</h1>
+        
+        <!-- Game Configuration -->
         <div class="row justify-content-center my-4">
-            <div class="d-flex align-items-center">
-                <!-- Buttons and Input will go here -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Game Settings
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="gridSize">Grid Size:</label>
+                            <select class="form-control" id="gridSize">
+                                <option value="2">2x2 (4 cards)</option>
+                                <option value="2x3" selected>2x3 (6 cards)</option>
+                                <option value="4">4x4 (16 cards)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="playersCount">Number of Players:</label>
+                            <select class="form-control" id="playersCount">
+                                <option value="1">1 Player</option>
+                                <option value="2" selected>2 Players</option>
+                                <option value="3">3 Players</option>
+                                <option value="4">4 Players</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameTheme">Theme:</label>
+                            <select class="form-control" id="gameTheme">
+                                <option value="animals" selected>Animals</option>
+                                <option value="fruits">Fruits</option>
+                                <option value="numbers">Numbers</option>
+                            </select>
+                        </div>
+                        <button id="startGame" class="btn btn-primary btn-block">Start Game</button>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <!-- Game Status -->
+        <div class="row justify-content-center my-4" id="game-status" style="display: none;">
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    <span id="status-text">Game in progress...</span>
+                </div>
+            </div>
+        </div>
+        
         <div id="game-board" class="row justify-content-center"></div>
         <div id="score-board" class="row justify-content-center my-4"></div>
     </div>  
-    <script type="module" src="dist/index.js"></script>
-
-</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusText = document.getElementById('status-text');
+            const gameStatus = document.getElementById('game-status');
+            const startButton = document.getElementById('startGame');
+            
+            let flippedCards = [];
+            let matchedPairs = 0;
+            let currentPlayer = 0;
+            let players = [];
+            let totalPairs = 0;
+            let canFlip = true;
+            
+            // Start-Button
+            startButton.addEventListener('click', function() {
+                // Spielkonfiguration auslesen
+                const gridSizeValue = document.getElementById('gridSize').value;
+                const numberOfPlayers = parseInt(document.getElementById('playersCount').value);
+                const themeValue = document.getElementById('gameTheme').value;
+                
+                // Berechne die Anzahl der Karten und Paare basierend auf der Rastergröße
+                let gridSize, totalCards;
+                
+                if (gridSizeValue === '2x3') {
+                    // Spezielles 2x3 Raster
+                    gridSize = { rows: 2, cols: 3 };
+                    totalCards = 6;
+                } else {
+                    // Quadratisches Raster (2x2 oder 4x4)
+                    gridSize = { rows: parseInt(gridSizeValue), cols: parseInt(gridSizeValue) };
+                    totalCards = gridSize.rows * gridSize.cols;
+                }
+                
+                const numberOfPairs = Math.floor(totalCards / 2);
+                const hasOddCard = totalCards % 2 !== 0;
+                
+                // Spielstatus zurücksetzen
+                flippedCards = [];
+                matchedPairs = 0;
+                currentPlayer = 0;
+                totalPairs = numberOfPairs;
+                canFlip = true;
+                
+                // Spieler initialisieren
+                players = [];
+                for (let i = 0; i < numberOfPlayers; i++) {
+                    players.push({
+                        id: i,
+                        name: `Player ${i + 1}`,
+                        score: 0,
+                        isActive: i === 0
+                    });
+                }
+                
+                // Spielbrett und Punktestand leeren
+                const gameBoard = document.getElementById('game-board');
+                const scoreBoard = document.getElementById('score-board');
+                gameBoard.innerHTML = '';
+                scoreBoard.innerHTML = '';
+                
+                // Spielstatus anzeigen
+                gameStatus.style.display = 'flex';
+                statusText.textContent = `Game started with ${gridSize.rows}x${gridSize.cols} grid and ${numberOfPlayers} players!`;
+                
+                // Spieler-Anzeige erstellen
+                updateScoreBoard();
+                
+                // Symbole basierend auf dem gewählten Thema
+                let symbols = [];
+                switch(themeValue) {
+                    case 'animals':
+                        symbols = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🦓', '🦒', '🦝', '🦄', '🦘', '🐸', '🐢', '🦜', '🦆', '🦅', '🐦', '🐧', '🐤', '🐺', '🦇', '🦋', '🐝'];
+                        break;
+                    case 'fruits':
+                        symbols = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🍆', '🥔', '🥕', '🌽', '🥦', '🥬', '🥒', '🌶️', '🌰', '🥜', '🍞', '🥐', '🥖', '🥨'];
+                        break;
+                    case 'numbers':
+                        symbols = Array.from({length: 30}, (_, i) => (i + 1).toString());
+                        break;
+                    default:
+                        symbols = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🦓', '🦒', '🦝', '🦄', '🦘', '🐸', '🐢', '🦜', '🦆', '🦅', '🐦', '🐧', '🐤', '🐺', '🦇', '🦋', '🐝'];
+                }
+                
+                // Wähle die benötigten Symbole aus
+                const selectedSymbols = symbols.slice(0, numberOfPairs);
+                
+                // Karten erstellen (zwei pro Symbol)
+                const cards = [];
+                for (let i = 0; i < numberOfPairs; i++) {
+                    cards.push({ id: i * 2, value: selectedSymbols[i], isMatched: false });
+                    cards.push({ id: i * 2 + 1, value: selectedSymbols[i], isMatched: false });
+                }
+                
+                // Bei ungerader Kartenanzahl eine Joker-Karte hinzufügen
+                if (hasOddCard) {
+                    cards.push({ id: totalCards - 1, value: '🃏', isMatched: true, isJoker: true });
+                }
+                
+                // Karten mischen
+                shuffleArray(cards);
+                
+                // Erstelle ein quadratisches Spielfeld
+                const gameContainer = document.createElement('div');
+                gameContainer.className = 'game-container mx-auto';
+                
+                // Setze die maximale Breite basierend auf der Rastergröße
+                if (gridSizeValue === '2x3') {
+                    gameContainer.style.maxWidth = '450px';
+                } else if (gridSizeValue === '2') {
+                    gameContainer.style.maxWidth = '350px';
+                } else {
+                    gameContainer.style.maxWidth = '550px';
+                }
+                
+                // Bei ungeraden Rastergrößen oder 2x3 verwenden wir ein spezielles Layout
+                if (hasOddCard || gridSizeValue === '2x3') {
+                    // Für ungerade Anzahl von Karten oder 2x3-Raster
+                    gameContainer.style.display = 'flex';
+                    gameContainer.style.flexWrap = 'wrap';
+                    gameContainer.style.justifyContent = 'center';
+                } else {
+                    // Für gerade Anzahl von Karten in quadratischem Raster
+                    gameContainer.style.display = 'grid';
+                    gameContainer.style.gridTemplateColumns = `repeat(${gridSize.cols}, 1fr)`;
+                }
+                
+                gameContainer.style.gap = '10px';
+                gameBoard.appendChild(gameContainer);
+                
+                // Karten zum Spielbrett hinzufügen
+                cards.forEach((card, index) => {
+                    const cardElement = document.createElement('div');
+                    
+                    // Bei ungeraden Rastergrößen oder 2x3
+                    if (hasOddCard || gridSizeValue === '2x3') {
+                        // Bestimme die Breite der Karten basierend auf der Rastergröße
+                        const cardWidth = gridSizeValue === '2x3' ? 33.33 : (100 / gridSize.cols);
+                        cardElement.style.width = `calc(${cardWidth}% - 10px)`;
+                        cardElement.style.aspectRatio = '1 / 1';
+                        
+                        // Wenn es die Joker-Karte ist (letzte Karte bei ungerader Anzahl)
+                        if (card.isJoker) {
+                            // Zentriere die Joker-Karte in der letzten Reihe
+                            cardElement.style.marginLeft = 'auto';
+                            cardElement.style.marginRight = 'auto';
+                        }
+                    } else {
+                        cardElement.className = 'card-wrapper';
+                    }
+                    
+                    // Spezielle Klasse für Joker-Karte
+                    const jokerClass = card.isJoker ? 'joker-card' : '';
+                    
+                    cardElement.innerHTML = `
+                        <div class="card-container ${jokerClass}" data-card-id="${card.id}">
+                            <div class="card ${card.isJoker ? 'matched' : ''}">
+                                <div class="card-front"></div>
+                                <div class="card-back">${card.value}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    gameContainer.appendChild(cardElement);
+                });
+                
+                // Klick-Event-Listener zu allen Karten hinzufügen
+                addCardEventListeners();
+            });
+            
+            // Karten-Event-Listener hinzufügen
+            function addCardEventListeners() {
+                const cardContainers = document.querySelectorAll('.card-container:not(.joker-card)');
+                cardContainers.forEach(container => {
+                    container.addEventListener('click', handleCardClick);
+                });
+            }
+            
+            // Karten-Klick behandeln
+            function handleCardClick() {
+                if (!canFlip) return; // Verhindere Klicks während der Überprüfung
+                
+                const cardId = parseInt(this.getAttribute('data-card-id'));
+                const card = this.querySelector('.card');
+                
+                // Prüfe, ob die Karte bereits umgedreht oder gematcht ist
+                if (card.classList.contains('flipped') || card.classList.contains('matched')) {
+                    return;
+                }
+                
+                // Karte umdrehen
+                card.classList.add('flipped');
+                flippedCards.push({ id: cardId, element: card });
+                
+                // Aktualisiere Spielstatus
+                statusText.textContent = `${players[currentPlayer].name} flipped a card`;
+                
+                // Wenn zwei Karten umgedreht wurden, prüfe auf ein Match
+                if (flippedCards.length === 2) {
+                    canFlip = false; // Verhindere weitere Klicks während der Überprüfung
+                    
+                    // Hole die Werte der umgedrehten Karten
+                    const card1 = flippedCards[0].element.querySelector('.card-back').innerHTML;
+                    const card2 = flippedCards[1].element.querySelector('.card-back').innerHTML;
+                    
+                    // Prüfe auf ein Match
+                    if (card1 === card2) {
+                        // Match gefunden
+                        setTimeout(() => {
+                            flippedCards.forEach(card => {
+                                card.element.classList.add('matched');
+                            });
+                            
+                            // Erhöhe Punktzahl des aktuellen Spielers
+                            players[currentPlayer].score++;
+                            matchedPairs++;
+                            
+                            // Aktualisiere Spielstatus
+                            statusText.textContent = `${players[currentPlayer].name} found a match!`;
+                            
+                            // Aktualisiere Punktestand
+                            updateScoreBoard();
+                            
+                            // Prüfe, ob das Spiel beendet ist
+                            if (matchedPairs === totalPairs) {
+                                endGame();
+                            } else {
+                                // Setze für den nächsten Zug zurück
+                                flippedCards = [];
+                                canFlip = true;
+                            }
+                        }, 500);
+                    } else {
+                        // Kein Match
+                        setTimeout(() => {
+                            flippedCards.forEach(card => {
+                                card.element.classList.remove('flipped');
+                            });
+                            
+                            // Wechsle zum nächsten Spieler
+                            switchPlayer();
+                            
+                            // Setze für den nächsten Zug zurück
+                            flippedCards = [];
+                            canFlip = true;
+                        }, 1000);
+                    }
+                }
+            }
+            
+            // Spielerwechsel
+            function switchPlayer() {
+                players[currentPlayer].isActive = false;
+                currentPlayer = (currentPlayer + 1) % players.length;
+                players[currentPlayer].isActive = true;
+                
+                // Aktualisiere Spielstatus
+                statusText.textContent = `${players[currentPlayer].name}'s turn`;
+                
+                // Aktualisiere Punktestand
+                updateScoreBoard();
+            }
+            
+            // Punktestand aktualisieren
+            function updateScoreBoard() {
+                const scoreBoard = document.getElementById('score-board');
+                scoreBoard.innerHTML = '';
+                
+                players.forEach(player => {
+                    const playerElement = document.createElement('div');
+                    playerElement.className = `col text-center ${player.isActive ? 'active-player' : ''}`;
+                    playerElement.innerHTML = `
+                        <h3>${player.name}</h3>
+                        <p class="score">Score: ${player.score}</p>
+                    `;
+                    scoreBoard.appendChild(playerElement);
+                });
+            }
+            
+            // Spiel beenden
+            function endGame() {
+                // Finde den Gewinner
+                const maxScore = Math.max(...players.map(p => p.score));
+                const winners = players.filter(p => p.score === maxScore);
+                
+                // Erstelle Gewinner-Nachricht
+                let winnerMessage = '';
+                if (winners.length > 1) {
+                    winnerMessage = `It's a tie between ${winners.map(w => w.name).join(' and ')}!`;
+                } else {
+                    winnerMessage = `${winners[0].name} wins with ${winners[0].score} points!`;
+                }
+                
+                // Zeige Gewinner an
+                statusText.textContent = `Game Over! ${winnerMessage}`;
+                
+                // Erstelle Spiel-neu-starten-Button
+                const gameStatus = document.getElementById('game-status');
+                gameStatus.innerHTML += `
+                    <button class="btn btn-success ml-3" onclick="location.reload()">Play Again</button>
+                `;
+            }
+            
+            // Hilfsfunktion zum Mischen eines Arrays
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+        });
+    </script>
+    
+    <style>
+        /* Spielfeld-Stile */
+        .game-container {
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .card-wrapper {
+            aspect-ratio: 1 / 1;
+            margin-bottom: 10px;
+        }
+        
+        .card-container {
+            width: 100%;
+            height: 100%;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card.matched {
+            transform: rotateY(180deg);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .card-front {
+            background-color: #3498db;
+        }
+        
+        .card-back {
+            background-color: #f1f1f1;
+            transform: rotateY(180deg);
+            font-size: 1.75rem;
+        }
+        
+        /* Aktiver Spieler Hervorhebung */
+        .active-player {
+            font-weight: bold;
+            color: #3498db;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+        
+        /* Zusätzliche Stile für die Joker-Karte */
+        .joker-card .card {
+            opacity: 0.5;
+            cursor: default;
+        }
+        
+        .joker-card .card-back {
+            font-size: 1.75rem;
+        }
+    </style>
 </body>
 </html>

@@ -1,44 +1,68 @@
-# Week 7: Memory Game Refactoring - Task Description
+# Memory Game - TypeScript Implementation
 
-## **Objective**
-The goal of this exercise is to **enhance and extend the Memory Game** using TypeScript. Each team consists of **2 students**, who will collaborate on improving the game’s structure, features, and user interface.
+## Overview
+This project is a modern implementation of the classic Memory Game using TypeScript. The game features a clean architecture with a focus on type safety, maintainability, and extensibility.
 
-Each team can earn **up to 10 points** based on the successful completion of specific tasks.
+## Features
 
----
+### Core Game Mechanics
+- **Card Matching**: Flip cards to find matching pairs
+- **Turn-Based Gameplay**: Players take turns flipping cards
+- **Score Tracking**: Points awarded for each matched pair
+- **Game Over Detection**: Game ends when all pairs are matched
 
-## **Tasks and Evaluation Criteria**
+### Advanced Features
+- **Multiple Game Themes**: Choose between numbers, emojis, or colors
+- **Configurable Difficulty**: Select the number of card pairs
+- **Multiplayer Support**: Play with multiple players (turn-based)
+- **Responsive UI**: Works on different screen sizes
 
-### **Task 1: Code Refactoring and Optimization (2 points)**
-- Improve the existing TypeScript structure for better readability and maintainability.
-- Apply best practices such as using `interfaces`, `enums`, and `generics`.
-- **Include a README file** explaining the implementation and any additional features.
+## Technical Implementation
 
-### **Task 2: Game Configurability (2 points)**
-- Allow players to select the number of card pairs before starting the game.
-- Ensure the settings update dynamically based on user input.
+### Architecture
+The game is built using a modular architecture with clear separation of concerns:
 
-### **Task 3: Multiplayer Mode (3 points)**
-- Implement player tracking with an alternating turn system.
-- Display the current player and update the scoreboard dynamically.
-- Ensure a fair and structured point system for scoring.
+- **GameManager**: Handles game logic and state management
+- **UIManager**: Manages the DOM and user interactions
+- **Type System**: Extensive use of TypeScript interfaces, enums, and generics
 
-### **Task 4: UI and User Experience Enhancements (2 points)**
-- Highlight the active player's turn visually.
-- Implement animations for card flipping and matching pairs.
-- Display an intuitive end-game summary with final scores.
+### TypeScript Features Used
+- **Interfaces**: For type definitions (Card, Player, GameState, etc.)
+- **Enums**: For game themes, difficulty levels, and event types
+- **Generics**: For type-safe event handling
+- **Type Guards**: For runtime type checking
 
-### **Bonus Challenge (1 point)**
-- Implement a **hint system** that briefly reveals unmatched cards.
-- Introduce different **game themes** (e.g., fruits, animals, numbers).
+### Event System
+The game uses a custom event system to handle communication between components:
+- Card flips
+- Match detection
+- Player switching
+- Game over conditions
 
----
+## How to Play
+1. Open the game in a web browser
+2. Select the number of card pairs and theme (if available)
+3. Players take turns flipping two cards at a time
+4. If the cards match, the player scores a point and gets another turn
+5. If the cards don't match, the next player takes their turn
+6. The game ends when all pairs are found
+7. The player with the most points wins
 
-## **Submission Requirements**
-- **Submit the project as a ZIP file via Moodle.**
-- **Ensure full documentation** with comments explaining key components.
-- **Maintain type safety** using TypeScript best practices.
+## Setup and Development
 
----
+### Prerequisites
+- Node.js (v14 or higher)
+- npm
 
-Good luck and happy coding!
+### Installation
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Build for production
+npm run build
+```
+
